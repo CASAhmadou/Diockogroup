@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Users extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'identity_verified',
+        'face_id'
     ];
 
     /**
@@ -41,4 +44,28 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function virtualCard(){
+        return $this->hasOne(VirtualCards::class);
+    }
+
+    public function identityDocument(){
+        return $this->hasOne(IdentityDocuments::class);
+    }
+
+    public function faceData(){
+        return $this->hasOne(FaceData::class);
+    }
+
+    public function sentTransactions(){
+        return $this->hasMany(Transactions::class, 'sender_id');
+    }
+
+    public function receivedTransactions(){
+        return $this->hasMany(Transactions::class, 'recipient_id');
+    }
+
+    public function notifications(){
+        return $this->hasMany(Notifications::class, 'sender_id');
+    }
 }
