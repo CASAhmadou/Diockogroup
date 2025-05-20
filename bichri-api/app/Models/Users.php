@@ -23,7 +23,11 @@ class Users extends Authenticatable
         'password',
         'phone',
         'identity_verified',
-        'face_id'
+        'face_id',
+        'balance',
+        'id_number',
+        'is_verified',
+        'verification_score'
     ];
 
     /**
@@ -43,6 +47,9 @@ class Users extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'balance' => 'decimal:2',
+        'is_verified' => 'boolean',
+        'verification_score' => 'decimal:2'
     ];
 
     public function virtualCard(){
@@ -57,12 +64,19 @@ class Users extends Authenticatable
         return $this->hasOne(FaceData::class);
     }
 
+    public function transactions(){
+        return $this->hasMany(Transactions::class);
+    }
+
+
     public function sentTransactions(){
-        return $this->hasMany(Transactions::class, 'sender_id');
+        return $this->hasMany(Transactions::class, 'sender_id')
+            ->where('type', 'debit')->whereNotNull('recipient_id');
     }
 
     public function receivedTransactions(){
-        return $this->hasMany(Transactions::class, 'recipient_id');
+        return $this->hasMany(Transactions::class, 'recipient_id')
+            ->where('type', 'credit');
     }
 
     public function notifications(){

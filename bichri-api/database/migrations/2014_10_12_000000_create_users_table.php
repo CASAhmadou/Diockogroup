@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
+            $table->string('id_number')->unique();
             $table->string('phone',20)->nullable();
-            $table->string('password');
+            $table->decimal('balance', 15, 2)->default(0);
+            $table->string('password')->nullable();
             $table->boolean('identity_verified')->default(false);
+            $table->decimal('verification_score', 5, 2)->nullable();
             $table->unsignedBigInteger('face_id')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });
@@ -36,12 +41,12 @@ return new class extends Migration
 
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->enum('transaction_type', ['deposit', 'withdrawal', 'transfer']);
+            $table->enum('transaction_type', ['credit', 'debit']);
             $table->decimal('amount', 15, 2);
 
             $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('recipient_id')->nullable()->constrained('users')->onDelete('cascade');
-
+            $table->string('method')->nullable();
             $table->string('reference_number')->unique();
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->text('description')->nullable();
@@ -53,6 +58,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('document_type', ['passport', 'id_card', 'driver_license']);
+            $table->string('image');
             $table->string('document_number');
             $table->string('full_name');
             $table->timestamp('date_of_birth');

@@ -10,8 +10,19 @@ class Transactions extends Model
     use HasFactory;
 
     protected $fillable = [
-        'transaction_type','sender_id', 'recipient_id', 'reference_id', 'reference_number', 'status', 'description'
+        'balance', 'transaction_type', 'amount', 'method', 'sender_id', 'recipient_id', 'reference_id', 'reference_number', 'status', 'description'
     ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
+    ];
+
+    public function user(){
+        return $this->belongsTo(Users::class);
+    }
+
 
     public function sender(){
         return $this->belongsTo(Users::class, 'sender_id');

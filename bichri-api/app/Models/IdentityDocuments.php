@@ -10,7 +10,7 @@ class IdentityDocuments extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'document_type', 'document_number', 'full_name', 'date_of_v=birth', 'expiry_date','country','verified','verification_date'
+        'user_id', 'document_type', 'document_number', 'image', 'full_name', 'date_of_v=birth', 'expiry_date','country','verified','verification_date'
     ];
 
 
